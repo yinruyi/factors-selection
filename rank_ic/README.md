@@ -4,4 +4,4 @@
 
 在多因子选股模型中，IC 通常被用于衡量因子对收益率的预测能力，选取较为广泛应用的因子，利用沪深300 成分股和中证500成分股分析其Rank-IC 在2014 年之后的表现，并总结各自特点。
 
-![](https://github.com/yinruyi/factors-selection/blob/master/rank_ic/pic/ADX.jpg)
+![image](https://github.com/yinruyi/factors-selection/raw/master/rank_ic/pic/ADX.jpg)
