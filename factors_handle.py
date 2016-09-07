@@ -35,7 +35,6 @@ FACTORS_NAME = [
     "NetProfitGrowRate",# 净利润增长率,属于成长能力类因子
     "HBETA",# 历史贝塔,超买超卖型因子
     "marketValue",# 总市值
-    "EBIT",# 息税前利润
     "InventoryTRate", #存货周转率
     "OperatingRevenueGrowRate",# 营业收入增长率,属于成长能力类因子
 ]
@@ -56,6 +55,22 @@ class MutiFactorsSelect(object):
         trading_days = cal_dates[cal_dates["isWeekEnd"]==1]["calendarDate"].tolist()
         return [day.replace("-","") for day in trading_days]
 
+    def factors_one_day_get(self, factor_name, tradeDate, ticker):
+        '''
+        多只股票某天单因子数据
+        '''
+        factor_api_field = "secID," + factor_name
+        # 获取当日成分股
+        cons_id_df = DataAPI.IdxConsGet(secID=u"",ticker=ticker,intoDate=tradeDate,isNew=u"",field=u"consID",pandas="1")
+        cons_id_ls = cons_id_df["consID"].tolist()
+        cons_id_str = ",".join(cons_id_ls)
+        if factor_name in ["ADX","RSI","VOL20","MTM","ROA","ROE","PB","PE","NetAssetGrowRate","NetProfitGrowRate","HBETA","InventoryTRate","OperatingRevenueGrowRate"]:
+            return DataAPI.MktStockFactorsOneDayGet(tradeDate=tradeDate,secID=cons_id_str,ticker=u"",field=factor_api_field,pandas="1")
+        elif factor_name in ["marketValue"]:
+            return DataAPI.MktEqudGet(tradeDate=tradeDate,secID=cons_id_str,ticker=u"",field=factor_api_field,pandas="1")
+        else:
+            return DataFrame()
+
     def rank_ic(self, factor_name, ticker="000300"):
         '''
         计算rank-ic并且画图
@@ -65,7 +80,6 @@ class MutiFactorsSelect(object):
         trading_days = self.day_list
         rank_ic_ls = []
         ic_ls = []
-        factor_api_field = "secID," + factor_name
 
         for i in range(len(trading_days)-1):
             # 获取当日成分股
@@ -73,7 +87,7 @@ class MutiFactorsSelect(object):
             cons_id_ls = cons_id_df["consID"].tolist()
             cons_id_str = ",".join(cons_id_ls)
             #获取每周最后一个交易日的因子值
-            factor_df = DataAPI.MktStockFactorsOneDayGet(tradeDate=trading_days[i],secID=cons_id_str,ticker=u"",field=factor_api_field,pandas="1")
+            factor_df = self.factors_one_day_get(factor_name, trading_days[i], ticker)
             # 获取相应股票未来一周的收益
             weekly_return = DataAPI.MktEquwAdjGet(secID=cons_id_str,beginDate=trading_days[i+1],endDate=trading_days[i+1],field=u"secID,return",pandas="1")
             factor_return_df = factor_df.merge(weekly_return,on='secID', how="inner")
