@@ -178,8 +178,8 @@ class MutiFactorsSelect(object):
                     rank_ic_ls.append(ic)
                 return rank_ic_ls
         if mode == "IC":
-            IC = np.array(map(_factor_ic, factor_name_list))
-            print IC
+            IC = np.array(map(_factor_ic, factor_name_list)).T
+            print IC,type(IC)
 
 
 
