@@ -179,6 +179,7 @@ class MutiFactorsSelect(object):
                 return rank_ic_ls
         if mode == "IC":
             IC = np.array(map(_factor_ic, factor_name_list))
+            print IC
 
 
 
@@ -193,5 +194,5 @@ class MutiFactorsSelect(object):
 
 if __name__ == '__main__':
     print 'test'
-    factor_name_list = ["ticker","tradeDate","RSI","MTM","ROA","PE","OperatingRevenueGrowRate"]
+    factor_name_list = ["RSI","MTM","ROA","PE","OperatingRevenueGrowRate"]
     MutiFactorsSelect().factors_weight_cal(factor_name_list,"20150821")
