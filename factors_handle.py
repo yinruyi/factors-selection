@@ -140,8 +140,8 @@ class MutiFactorsSelect(object):
         @ticker 计算weight股票基准
         @mode 默认通过IC计算,IC/rankIC
         '''
-        day_list = self.day_list()
-        trading_days = self._back_day_list(today, date_list, 10)
+        day_list = self.day_list
+        trading_days = self._back_day_list(today, day_list, 10)
         def _factor_ic(factor_name, trading_days=trading_days ,mode=mode, ticker=ticker):
             if mode == "IC":
                 ic_ls = []
@@ -150,7 +150,7 @@ class MutiFactorsSelect(object):
                     cons_id_ls = cons_id_df["consID"].tolist()
                     cons_id_str = ",".join(cons_id_ls)
                     #获取每周最后一个交易日的因子值
-                    factor_df = factors_one_day_get(factor_name, trading_days[i], ticker)
+                    factor_df = self._factors_one_day_get(factor_name, trading_days[i], ticker)
                     # 获取相应股票未来一周的收益
                     weekly_return = DataAPI.MktEquwAdjGet(secID=cons_id_str,beginDate=trading_days[i+1],endDate=trading_days[i+1],field=u"secID,return",pandas="1")
                     factor_return_df = factor_df.merge(weekly_return,on='secID', how="inner")
@@ -168,7 +168,7 @@ class MutiFactorsSelect(object):
                     cons_id_ls = cons_id_df["consID"].tolist()
                     cons_id_str = ",".join(cons_id_ls)
                     #获取每周最后一个交易日的因子值
-                    factor_df = factors_one_day_get(factor_name, trading_days[i], ticker)
+                    factor_df = self._factors_one_day_get(factor_name, trading_days[i], ticker)
                     # 获取相应股票未来一周的收益
                     weekly_return = DataAPI.MktEquwAdjGet(secID=cons_id_str,beginDate=trading_days[i+1],endDate=trading_days[i+1],field=u"secID,return",pandas="1")
                     factor_return_df = factor_df.merge(weekly_return,on='secID', how="inner")
@@ -194,4 +194,4 @@ class MutiFactorsSelect(object):
 if __name__ == '__main__':
     print 'test'
     factor_name_list = ["ticker","tradeDate","RSI","MTM","ROA","PE","OperatingRevenueGrowRate"]
-    MutiFactorsSelect().factors_weight_cal(,"20150821")
+    MutiFactorsSelect().factors_weight_cal(factor_name_list,"20150821")
